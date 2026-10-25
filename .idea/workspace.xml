@@ -4,7 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="386ff9d3-c324-48de-a6f4-ee013664fb5d" name="Изменения" comment="СОБРАННЫЙ ПО ЗАВЕТАМ ДИПСИКА БЭК" />
+    <list default="true" id="386ff9d3-c324-48de-a6f4-ee013664fb5d" name="Изменения" comment="СОБРАННЫЙ ПО ЗАВЕТАМ ДИПСИКА БЭК">
+      <change afterPath="$PROJECT_DIR$/Frontend/.env.example" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/src/App.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/src/api.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/src/constants.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/src/index.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/src/main.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/src/pages/AnimalDetailsPage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/src/pages/AnimalFormPage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/src/pages/AnimalsListPage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Frontend/vite.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/REST_API.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/REST_API.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/crud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/app/main.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,18 +31,29 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="HTML File" />
+        <option value="Dockerfile" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/AnimeTankist/REST_API_ANIMAL_SHELTER",
-    "accountId": "b38374a3-5bb0-467e-929b-527212d67882"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;AnimeTankist&quot;
   }
-}]]></component>
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/AnimeTankist/REST_API_ANIMAL_SHELTER&quot;,
+    &quot;accountId&quot;: &quot;b38374a3-5bb0-467e-929b-527212d67882&quot;
+  }
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -37,19 +65,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.seed.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.seed.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;C:/Users/zavor/AppData/Roaming/JetBrains/WebStorm2026.2/node/versions/24.22.1/node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;python.packages.toolwindow.project.migrated.to.right.top.v2&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\zavor\PycharmProjects\REST_API" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-4e2b1448bda8-9a97661f3031-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.27397.106" />
+        <option value="bundled-python-sdk-73a66231627c-5bd6d13a2a75-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-262.10968.92" />
       </set>
     </attachedChunks>
   </component>
@@ -60,6 +103,11 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1792854982766</updated>
+      <workItem from="1792918216244" duration="5000" />
+      <workItem from="1792918225939" duration="104000" />
+      <workItem from="1792918604278" duration="6750000" />
+      <workItem from="1792955205042" duration="339000" />
+      <workItem from="1792955986201" duration="690000" />
     </task>
     <task id="LOCAL-00001" summary="СОБРАННЫЙ ПО ЗАВЕТАМ ДИПСИКА БЭК">
       <option name="closed" value="true" />
@@ -69,8 +117,30 @@
       <option name="project" value="LOCAL" />
       <updated>1792917085902</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="СОБРАННЫЙ ПО ЗАВЕТАМ ДИПСИКА БЭК">
+      <option name="closed" value="true" />
+      <created>1792917139686</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1792917139686</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="СОБРАННЫЙ ПО ЗАВЕТАМ ДИПСИКА БЭК" />

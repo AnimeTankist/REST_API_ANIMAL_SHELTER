@@ -1,111 +1,172 @@
-from datetime import date, datetime
+"""Операции доступа к данным (CRUD) для животных приюта.
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+Pydantic-схемы запросов и ответов находятся в ``app/schemas.py``,
+здесь — только работа с БД через SQLAlchemy.
+"""
 
-from .models import Gender, Species, Status
+from datetime import date, timedelta
+from typing import Any, Literal
 
+from sqlalchemy import Select, func, or_, select
+from sqlalchemy.orm import Session
 
-class AnimalBase(BaseModel):
-    """Общие поля животного + валидация."""
+from . import models, schemas
 
-    name: str = Field(..., min_length=1, max_length=50, examples=["Барсик"])
-    species: Species = Field(..., examples=["cat"])
-    breed: str | None = Field(default=None, max_length=80, examples=["Домашняя короткошёрстная"])
-    gender: Gender = Field(default=Gender.unknown)
-    age_months: int = Field(..., ge=0, le=600, description="Возраст в месяцах", examples=[18])
-    status: Status = Field(default=Status.available)
-    description: str | None = Field(default=None, max_length=1000)
-    arrival_date: date | None = Field(default=None, description="Дата поступления (по умолчанию — сегодня)")
-    adopted_date: date | None = Field(default=None, description="Дата передачи новому хозяину")
-
-    @field_validator("name")
-    @classmethod
-    def _name_not_blank(cls, value: str) -> str:
-        value = value.strip()
-        if not value:
-            raise ValueError("Кличка не может быть пустой")
-        return value
-
-    @field_validator("arrival_date", "adopted_date")
-    @classmethod
-    def _date_not_in_future(cls, value: date | None) -> date | None:
-        if value is not None and value > date.today():
-            raise ValueError("Дата не может быть в будущем")
-        return value
-
-    @model_validator(mode="after")
-    def _check_dates_order(self):
-        if (
-            self.arrival_date
-            and self.adopted_date
-            and self.adopted_date < self.arrival_date
-        ):
-            raise ValueError("Дата передачи не может быть раньше даты поступления")
-        return self
+#: Поля, по которым разрешена сортировка в GET /animals.
+SORT_COLUMNS = {
+    "id": models.Animal.id,
+    "name": models.Animal.name,
+    "age_months": models.Animal.age_months,
+    "arrival_date": models.Animal.arrival_date,
+    "created_at": models.Animal.created_at,
+    "status": models.Animal.status,
+}
 
 
-class AnimalCreate(AnimalBase):
-    """Тело запроса на создание животного."""
+def _escape_like(value: str) -> str:
+    """Экранирует служебные символы LIKE (%, _ и обратный слэш)."""
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
 
-class AnimalUpdate(AnimalBase):
-    """Тело запроса на полное обновление (PUT)."""
+def _apply_filters(
+    stmt: Select,
+    *,
+    species: models.Species | None,
+    status: models.Status | None,
+    gender: models.Gender | None,
+    search: str | None,
+    min_age: int | None,
+    max_age: int | None,
+) -> Select:
+    """Добавляет к запросу фильтры по виду/статусу/полу, поиск и диапазон возраста."""
+    if species is not None:
+        stmt = stmt.where(models.Animal.species == species)
+    if status is not None:
+        stmt = stmt.where(models.Animal.status == status)
+    if gender is not None:
+        stmt = stmt.where(models.Animal.gender == gender)
+    if min_age is not None:
+        stmt = stmt.where(models.Animal.age_months >= min_age)
+    if max_age is not None:
+        stmt = stmt.where(models.Animal.age_months <= max_age)
+    if search:
+        # py_lower() регистрируется в app.database: встроенный lower() SQLite
+        # не работает с кириллицей, поэтому поиск регистронезависимый для любого текста.
+        pattern = f"%{_escape_like(search.strip().lower())}%"
+        stmt = stmt.where(
+            or_(
+                func.py_lower(models.Animal.name).like(pattern, escape="\\"),
+                func.py_lower(models.Animal.breed).like(pattern, escape="\\"),
+                func.py_lower(models.Animal.description).like(pattern, escape="\\"),
+            )
+        )
+    return stmt
 
 
-class AnimalPatch(BaseModel):
-    """Тело запроса на частичное обновление (PATCH) — все поля опциональны."""
+def list_animals(
+    db: Session,
+    *,
+    species: models.Species | None = None,
+    status: models.Status | None = None,
+    gender: models.Gender | None = None,
+    search: str | None = None,
+    min_age: int | None = None,
+    max_age: int | None = None,
+    sort_by: str = "id",
+    order: Literal["asc", "desc"] = "asc",
+    limit: int = 10,
+    offset: int = 0,
+) -> tuple[int, list[models.Animal]]:
+    """Возвращает кортеж ``(общее количество по фильтру, страница животных)``."""
+    stmt = _apply_filters(
+        select(models.Animal),
+        species=species,
+        status=status,
+        gender=gender,
+        search=search,
+        min_age=min_age,
+        max_age=max_age,
+    )
+    total = db.scalar(select(func.count()).select_from(stmt.subquery())) or 0
 
-    name: str | None = Field(default=None, min_length=1, max_length=50)
-    species: Species | None = None
-    breed: str | None = Field(default=None, max_length=80)
-    gender: Gender | None = None
-    age_months: int | None = Field(default=None, ge=0, le=600)
-    status: Status | None = None
-    description: str | None = Field(default=None, max_length=1000)
-    arrival_date: date | None = None
-    adopted_date: date | None = None
-
-    @field_validator("name")
-    @classmethod
-    def _name_not_blank(cls, value: str | None) -> str | None:
-        if value is not None:
-            value = value.strip()
-            if not value:
-                raise ValueError("Кличка не может быть пустой")
-        return value
-
-    @field_validator("arrival_date", "adopted_date")
-    @classmethod
-    def _date_not_in_future(cls, value: date | None) -> date | None:
-        if value is not None and value > date.today():
-            raise ValueError("Дата не может быть в будущем")
-        return value
-
-
-class AnimalRead(AnimalBase):
-    """Ответ API по одному животному."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    created_at: datetime
-    updated_at: datetime
+    column = SORT_COLUMNS.get(sort_by, models.Animal.id)
+    ordering = column.asc() if order == "asc" else column.desc()
+    # id — второй ключ сортировки, чтобы пагинация была стабильной при равных значениях
+    page = stmt.order_by(ordering, models.Animal.id).limit(limit).offset(offset)
+    return total, list(db.scalars(page).all())
 
 
-class AnimalPage(BaseModel):
-    """Страница списка животных."""
-
-    total: int = Field(..., description="Всего записей по фильтру")
-    limit: int
-    offset: int
-    items: list[AnimalRead]
+def get_animal(db: Session, animal_id: int) -> models.Animal | None:
+    """Возвращает животное по id (или ``None``, если записи нет)."""
+    return db.get(models.Animal, animal_id)
 
 
-class ShelterStats(BaseModel):
-    """Агрегированная статистика по приюту."""
+def create_animal(db: Session, payload: schemas.AnimalCreate) -> models.Animal:
+    """Создаёт животное; незаполненные поля получают значения по умолчанию модели."""
+    data = payload.model_dump(exclude_unset=True, exclude_none=True)
+    animal = models.Animal(**data)
+    db.add(animal)
+    db.commit()
+    db.refresh(animal)
+    return animal
 
-    total: int = Field(..., description="Всего животных в базе")
-    by_species: dict[str, int] = Field(..., description="Количество по видам")
-    by_status: dict[str, int] = Field(..., description="Количество по статусам")
-    average_age_months: float | None = Field(..., description="Средний возраст, мес.")
-    adopted_last_30_days: int = Field(..., description="Передано хозяевам за 30 дней")
+
+def update_animal(db: Session, animal: models.Animal, data: dict[str, Any]) -> models.Animal:
+    """Применяет переданные поля к животному и сохраняет изменения.
+
+    ``None`` для NOT NULL колонок игнорируется: так PUT без ``arrival_date``
+    не затирает дату поступления (у неё есть значение по умолчанию в модели),
+    при этом PATCH по-прежнему может очищать nullable-поля.
+    """
+    columns = models.Animal.__table__.columns
+    for field, value in data.items():
+        column = columns.get(field)
+        if column is None or (value is None and not column.nullable):
+            continue
+        setattr(animal, field, value)
+    db.commit()
+    db.refresh(animal)
+    return animal
+
+
+def delete_animal(db: Session, animal: models.Animal) -> None:
+    """Удаляет животное из базы."""
+    db.delete(animal)
+    db.commit()
+
+
+def get_stats(db: Session) -> dict[str, Any]:
+    """Считает агрегированную статистику по приюту."""
+    total = db.scalar(select(func.count()).select_from(models.Animal)) or 0
+
+    by_species = {
+        (species.value if species is not None else "unknown"): count
+        for species, count in db.execute(
+            select(models.Animal.species, func.count()).group_by(models.Animal.species)
+        ).all()
+    }
+    by_status = {
+        (status.value if status is not None else "unknown"): count
+        for status, count in db.execute(
+            select(models.Animal.status, func.count()).group_by(models.Animal.status)
+        ).all()
+    }
+
+    avg_age = db.scalar(select(func.avg(models.Animal.age_months)))
+    since = date.today() - timedelta(days=30)
+    adopted_last_30_days = db.scalar(
+        select(func.count())
+        .select_from(models.Animal)
+        .where(
+            models.Animal.status == models.Status.adopted,
+            models.Animal.adopted_date >= since,
+        )
+    ) or 0
+
+    return {
+        "total": total,
+        "by_species": by_species,
+        "by_status": by_status,
+        "average_age_months": round(float(avg_age), 1) if avg_age is not None else None,
+        "adopted_last_30_days": adopted_last_30_days,
+    }

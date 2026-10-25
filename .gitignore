@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Локальная база SQLite
+*.db
+*.sqlite3
+
+# Переменные окружения (шаблон .env.example остаётся в репозитории)
+.env
+.env.local
+
+# Node / Vite
+node_modules/
+dist/
+
+# Локальные данные IDE
+.idea/deepseek-sessions.json
+.idea/deepseek-sessions.json.bak
